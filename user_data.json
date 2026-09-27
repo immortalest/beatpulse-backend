@@ -1,0 +1,152 @@
+{
+  "favorites": [
+    {
+      "artist": "Zee Music Company",
+      "cover": "https://i.ytimg.com/vi/Grr0FlC8SQA/hqdefault.jpg",
+      "id": "Grr0FlC8SQA",
+      "title": "Kalank Title Track - Lyrical",
+      "video_url": "https://www.youtube.com/watch?v=Grr0FlC8SQA"
+    },
+    {
+      "artist": "Atif Aslam",
+      "cover": "https://i.ytimg.com/vi/5U5Ru0nTiUM/hqdefault.jpg",
+      "id": "5U5Ru0nTiUM",
+      "title": "Tere Liye",
+      "video_url": "https://www.youtube.com/watch?v=5U5Ru0nTiUM"
+    },
+    {
+      "artist": "Sony Music India",
+      "cover": "https://i.ytimg.com/vi/nDjloeIB3Pc/hqdefault.jpg",
+      "id": "nDjloeIB3Pc",
+      "isDownloaded": false,
+      "title": "Sitaare",
+      "video_url": "https://www.youtube.com/watch?v=nDjloeIB3Pc"
+    },
+    {
+      "artist": "T-Series",
+      "cover": "https://i.ytimg.com/vi/DY1DdeW3VyI/hqdefault.jpg",
+      "id": "DY1DdeW3VyI",
+      "isDownloaded": false,
+      "title": "Tere Ishk Mein (Full )",
+      "video_url": "https://www.youtube.com/watch?v=DY1DdeW3VyI"
+    }
+  ],
+  "history": [
+    {
+      "artist": "RB Lyrics Lover",
+      "cover": "https://i.ytimg.com/vi/olTVf-fKfKw/hqdefault.jpg",
+      "id": "olTVf-fKfKw",
+      "isDownloaded": false,
+      "title": "Agar Tum Mi Jao Lyrics",
+      "video_url": "https://www.youtube.com/watch?v=olTVf-fKfKw"
+    },
+    {
+      "artist": "Weathering With Lofi",
+      "cover": "https://i.ytimg.com/vi/RVOUAUMvx7A/hqdefault.jpg",
+      "id": "RVOUAUMvx7A",
+      "isDownloaded": false,
+      "title": "Agar Tum Saath Ho",
+      "video_url": "https://www.youtube.com/watch?v=RVOUAUMvx7A"
+    },
+    {
+      "artist": "Saregama Music",
+      "cover": "https://i.ytimg.com/vi/GX9x62kFsVU/hqdefault.jpg",
+      "id": "GX9x62kFsVU",
+      "isDownloaded": false,
+      "title": "Gehra Hua",
+      "video_url": "https://www.youtube.com/watch?v=GX9x62kFsVU"
+    },
+    {
+      "artist": " \u099c\u09c0\u09ac\u09a8\u09aa\u09a5\u09bf\u0995 ~ Jibonpathik",
+      "cover": "https://i.ytimg.com/vi/r_3zVIyblLQ/hqdefault.jpg",
+      "id": "r_3zVIyblLQ",
+      "isDownloaded": false,
+      "title": "Dil Sambhal Ja Zara",
+      "video_url": "https://www.youtube.com/watch?v=r_3zVIyblLQ"
+    },
+    {
+      "artist": "Superhit Music",
+      "cover": "https://i.ytimg.com/vi/fX41N940bMU/hqdefault.jpg",
+      "id": "fX41N940bMU",
+      "isDownloaded": false,
+      "title": "Tu Hi Hai Aashiqui Lyrics - Arijit Singh , Palak Muchhal",
+      "video_url": "https://www.youtube.com/watch?v=fX41N940bMU"
+    },
+    {
+      "artist": "Musicroo",
+      "cover": "https://i.ytimg.com/vi/KMz2pTfRIxw/hqdefault.jpg",
+      "id": "KMz2pTfRIxw",
+      "isDownloaded": false,
+      "title": "Chhod Diya (Lyrics) - Arijit Singh, Kanika Kapoor",
+      "video_url": "https://www.youtube.com/watch?v=KMz2pTfRIxw"
+    },
+    {
+      "artist": "Sankalp",
+      "cover": "https://i.ytimg.com/vi/10iV-krF-6g/hqdefault.jpg",
+      "id": "10iV-krF-6g",
+      "isDownloaded": false,
+      "title": "Tum Hi Ho (Lyrics)",
+      "video_url": "https://www.youtube.com/watch?v=10iV-krF-6g"
+    },
+    {
+      "artist": "Sony Music India",
+      "cover": "https://i.ytimg.com/vi/nDjloeIB3Pc/hqdefault.jpg",
+      "id": "nDjloeIB3Pc",
+      "isDownloaded": false,
+      "title": "Sitaare",
+      "video_url": "https://www.youtube.com/watch?v=nDjloeIB3Pc"
+    },
+    {
+      "artist": "Saved Offline Track",
+      "cover": "https://picsum.photos/300?random=4",
+      "id": "local_4",
+      "isLocal": true,
+      "rel_path": "Kalank Title Track - Lyrical.mp3",
+      "title": "Kalank Title Track - Lyrical",
+      "url": "http://127.0.0.1:5000/songs/Kalank Title Track - Lyrical.mp3"
+    },
+    {
+      "artist": "T-Series",
+      "cover": "https://i.ytimg.com/vi/DY1DdeW3VyI/hqdefault.jpg",
+      "id": "DY1DdeW3VyI",
+      "isDownloaded": false,
+      "title": "Tere Ishk Mein (Full )",
+      "video_url": "https://www.youtube.com/watch?v=DY1DdeW3VyI"
+    },
+    {
+      "artist": "T-Series",
+      "cover": "https://i.ytimg.com/vi/LWna8JKjfiQ/hqdefault.jpg",
+      "id": "LWna8JKjfiQ",
+      "isDownloaded": false,
+      "title": "Aaj Phir Full",
+      "video_url": "https://www.youtube.com/watch?v=LWna8JKjfiQ"
+    },
+    {
+      "artist": "T-Series",
+      "cover": "https://i.ytimg.com/vi/58kOTj-Fe1E/hqdefault.jpg",
+      "id": "58kOTj-Fe1E",
+      "isDownloaded": false,
+      "title": "Dil Mein Chhupa Loonga",
+      "video_url": "https://www.youtube.com/watch?v=58kOTj-Fe1E"
+    },
+    {
+      "artist": "T-Series",
+      "cover": "https://i.ytimg.com/vi/__ZvXBf1rmw/hqdefault.jpg",
+      "id": "__ZvXBf1rmw",
+      "isDownloaded": false,
+      "title": "WAJAH TUM HO Full",
+      "video_url": "https://www.youtube.com/watch?v=__ZvXBf1rmw"
+    }
+  ],
+  "playlists": {
+    "shadow": [
+      {
+        "artist": "Zee Music Company",
+        "cover": "https://i.ytimg.com/vi/Grr0FlC8SQA/hqdefault.jpg",
+        "id": "Grr0FlC8SQA",
+        "title": "Kalank Title Track - Lyrical",
+        "video_url": "https://www.youtube.com/watch?v=Grr0FlC8SQA"
+      }
+    ]
+  }
+}
