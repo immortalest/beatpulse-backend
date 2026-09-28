@@ -1,786 +1,98 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>BeatPulse Music Player</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
-    body { display: flex; flex-direction: column; height: 100vh; background-color: #000; color: #fff; overflow: hidden; }
-    .container { display: flex; flex: 1; overflow: hidden; }
-    
-    /* Sidebar */
-    .sidebar { width: 240px; background-color: #000; padding: 20px 15px; display: flex; flex-direction: column; gap: 10px; border-right: 1px solid #181818; }
-    .logo { color: #1DB954; font-size: 24px; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
-    
-    .section-btn {
-      background-color: #181818; color: #b3b3b3; border: 1px solid #282828;
-      padding: 10px 15px; border-radius: 20px; cursor: pointer; text-align: left; font-size: 13px; font-weight: 600;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .section-btn:hover { color: #fff; background-color: #282828; }
-    .section-btn.active-tab { background-color: #1DB954; color: #000; border: none; font-weight: bold; }
-
-    .backup-tools { display: flex; gap: 6px; margin-top: 5px; }
-    .backup-btn { flex: 1; background-color: #242424; color: #1DB954; border: 1px solid #333; padding: 6px; border-radius: 12px; font-size: 10px; font-weight: bold; cursor: pointer; text-align: center; }
-    .backup-btn:hover { background-color: #1DB954; color: #000; }
-
-    .playlist-section { margin-top: 10px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .playlist-title-header { font-size: 11px; text-transform: uppercase; color: #b3b3b3; letter-spacing: 1px; }
-    .add-playlist-btn { background: none; border: 1px dashed #444; color: #1DB954; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-
-    /* Main Content */
-    .main-content { flex: 1; background: linear-gradient(to bottom, #1e1e1e, #121212); padding: 20px; overflow-y: auto; position: relative; }
-    .header { display: flex; gap: 15px; align-items: center; margin-bottom: 15px; justify-content: space-between; flex-wrap: wrap; }
-    .search-group { display: flex; gap: 10px; align-items: center; }
-    .search-bar { width: 320px; padding: 10px 18px; border-radius: 20px; border: none; outline: none; background-color: #242424; color: #fff; font-size: 14px; }
-    .search-btn { background-color: #1DB954; color: #000; border: none; padding: 10px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-    
-    .mood-chips { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
-    .chip { background-color: #242424; color: #fff; padding: 6px 14px; border-radius: 16px; font-size: 12px; cursor: pointer; border: 1px solid #333; white-space: nowrap; }
-    .chip:hover { background-color: #1DB954; color: #000; border-color: #1DB954; font-weight: bold; }
-
-    .timer-container { display: flex; align-items: center; gap: 6px; background-color: #242424; padding: 6px 12px; border-radius: 20px; font-size: 12px; }
-    .timer-select { background: none; border: none; color: #1DB954; font-weight: bold; font-size: 12px; outline: none; cursor: pointer; }
-
-    .artist-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
-    .artist-card { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; min-width: 90px; }
-    .artist-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #1DB954; }
-    .artist-card span { font-size: 12px; font-weight: 600; color: #fff; text-align: center; }
-
-    .section-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; margin-top: 15px; }
-    .section-title { font-size: 20px; font-weight: bold; }
-    .bulk-dl-btn { background-color: #1DB954; color: #000; border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; }
-
-    /* Song Grid */
-    .song-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 18px; }
-    .card { background-color: #181818; padding: 12px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; position: relative; }
-    .card:hover { background-color: #282828; }
-    .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
-    .card h4 { font-size: 13px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card p { font-size: 11px; color: #b3b3b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
-    
-    .card-actions { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
-    .action-icon { background: none; border: none; color: #b3b3b3; font-size: 15px; cursor: pointer; padding: 2px; }
-    .action-icon:hover { color: #fff; }
-    .action-icon.liked { color: #1DB954; }
-    
-    .save-btn { background-color: #282828; color: #1DB954; border: 1px solid #1DB954; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; cursor: pointer; }
-    .downloaded-badge { background-color: #1DB954; color: #000; padding: 3px 6px; border-radius: 10px; font-size: 10px; font-weight: bold; }
-
-    /* Player Bar */
-    .player-bar { height: 90px; background-color: #181818; border-top: 1px solid #282828; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
-    .song-info { display: flex; align-items: center; gap: 12px; width: 240px; }
-    .song-info img { width: 54px; height: 54px; border-radius: 4px; object-fit: cover; }
-    .song-details h5 { font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .song-details p { font-size: 11px; color: #b3b3b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
-    .controls { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 500px; }
-    .buttons { display: flex; gap: 15px; align-items: center; }
-    
-    .toggle-btn { background: #282828; border: 1px solid #333; color: #888; padding: 5px 10px; border-radius: 16px; cursor: pointer; font-size: 12px; }
-    .toggle-btn.active { background-color: #1DB954 !important; color: #000 !important; font-weight: bold; border: none; }
-
-    .btn { background: none; border: none; color: #b3b3b3; cursor: pointer; font-size: 16px; }
-    .btn:hover { color: #fff; }
-    .btn-play { background-color: #1DB954; color: #000; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; border: none; cursor: pointer; font-size: 16px; }
-    
-    .progress-container { width: 100%; display: flex; align-items: center; gap: 10px; font-size: 11px; color: #b3b3b3; }
-    .progress-bar { flex: 1; accent-color: #1DB954; cursor: pointer; }
-
-    .right-controls { width: 280px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-    .volume-bar { width: 70px; accent-color: #1DB954; cursor: pointer; }
-
-    .overlay-panel { position: absolute; right: 20px; top: 70px; width: 320px; background-color: #181818; border: 1px solid #333; border-radius: 12px; padding: 15px; display: none; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.8); max-height: 400px; overflow-y: auto; }
-    .overlay-header { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #121212; color: #ffffff; width: 100vw; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+    header { background: #000; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; color: #1db954; border-bottom: 1px solid #282828; }
+    .search-box { display: flex; padding: 12px; gap: 8px; background: #181818; }
+    .search-box input { flex: 1; padding: 10px 14px; border-radius: 20px; border: none; background: #282828; color: #fff; font-size: 14px; outline: none; }
+    .search-box button { padding: 10px 18px; border-radius: 20px; border: none; background: #1db954; color: #fff; font-weight: bold; cursor: pointer; }
+    .song-list { flex: 1; padding: 10px; overflow-y: auto; padding-bottom: 90px; }
+    .song-card { display: flex; align-items: center; padding: 10px; background: #181818; margin-bottom: 8px; border-radius: 8px; cursor: pointer; gap: 12px; }
+    .song-card img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+    .song-info { flex: 1; overflow: hidden; }
+    .song-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-artist { font-size: 12px; color: #b3b3b3; margin-top: 4px; }
+    .player { position: fixed; bottom: 0; left: 0; width: 100%; background: #282828; padding: 12px; border-top: 1px solid #333; display: flex; flex-direction: column; gap: 8px; }
+    audio { width: 100%; height: 36px; }
+    .status-msg { text-align: center; color: #888; font-size: 13px; margin-top: 20px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="sidebar">
-      <div class="logo">🎵 BeatPulse</div>
-      <button class="section-btn active-tab" id="onlineTabBtn" onclick="switchTab('online')">🌐 Search Online</button>
-      <button class="section-btn" id="localTabBtn" onclick="switchTab('local')">📁 Saved MP3s</button>
-      <button class="section-btn" id="favTabBtn" onclick="switchTab('favorites')">❤️ Liked Songs</button>
-      <button class="section-btn" id="historyTabBtn" onclick="switchTab('history')">🕒 History</button>
+  <header>🎵 BeatPulse Music</header>
 
-      <div class="backup-tools">
-        <button class="backup-btn" onclick="exportDataBackup()">💾 Export</button>
-        <button class="backup-btn" onclick="triggerImportBackup()">📥 Import</button>
-        <input type="file" id="importFileInput" style="display:none" accept=".json" onchange="handleFileImport(event)">
-      </div>
-
-      <div class="playlist-section">
-        <div class="playlist-title-header">Your Playlists</div>
-        <button class="add-playlist-btn" onclick="createNewPlaylist()">+ Create Playlist</button>
-        <div id="playlistList" style="display: flex; flex-direction: column; gap: 5px; margin-top: 5px;"></div>
-      </div>
-    </div>
-
-    <div class="main-content">
-      <div class="header">
-        <div class="search-group">
-          <input type="text" id="searchInput" class="search-bar" placeholder="Search song or artist..." value="Arijit Singh">
-          <button class="search-btn" onclick="triggerSearch()">Search</button>
-        </div>
-
-        <div class="timer-container">
-          <span>🌙 Sleep:</span>
-          <select class="timer-select" id="timerSelect" onchange="handleTimerChange(this.value)">
-            <option value="0">Off</option>
-            <option value="15">15 Mins</option>
-            <option value="30">30 Mins</option>
-            <option value="45">45 Mins</option>
-          </select>
-          <span id="timerDisplay"></span>
-        </div>
-      </div>
-
-      <div class="mood-chips">
-        <div class="chip" onclick="searchByTag('Romantic Songs')">❤️ Romantic</div>
-        <div class="chip" onclick="searchByTag('Lofi Hits')">🎧 Lofi</div>
-        <div class="chip" onclick="searchByTag('Party Songs')">🔥 Party</div>
-        <div class="chip" onclick="searchByTag('Sad Songs')">🌧️ Sad</div>
-        <div class="chip" onclick="searchByTag('Devotional Bhakti')">🙏 Devotional</div>
-        <div class="chip" onclick="searchByTag('Gym Workout')">🏋️ Workout</div>
-      </div>
-
-      <div class="artist-grid">
-        <div class="artist-card" onclick="playArtistRadio('Arijit Singh')">
-          <img src="https://c.saavncdn.com/artists/Arijit_Singh_002_20230323062147_500x500.jpg" alt="Arijit" onerror="this.src='https://picsum.photos/150?random=101'">
-          <span>Arijit Singh</span>
-        </div>
-        <div class="artist-card" onclick="playArtistRadio('Atif Aslam')">
-          <img src="https://c.saavncdn.com/artists/Atif_Aslam_500x500.jpg" alt="Atif" onerror="this.src='https://picsum.photos/150?random=102'">
-          <span>Atif Aslam</span>
-        </div>
-        <div class="artist-card" onclick="playArtistRadio('Neha Kakkar')">
-          <img src="https://c.saavncdn.com/artists/Neha_Kakkar_500x500.jpg" alt="Neha" onerror="this.src='https://picsum.photos/150?random=103'">
-          <span>Neha Kakkar</span>
-        </div>
-        <div class="artist-card" onclick="playArtistRadio('Pritam')">
-          <img src="https://c.saavncdn.com/artists/Pritam_500x500.jpg" alt="Pritam" onerror="this.src='https://picsum.photos/150?random=104'">
-          <span>Pritam</span>
-        </div>
-        <div class="artist-card" onclick="playArtistRadio('Shreya Ghoshal')">
-          <img src="https://c.saavncdn.com/artists/Shreya_Ghoshal_500x500.jpg" alt="Shreya" onerror="this.src='https://picsum.photos/150?random=105'">
-          <span>Shreya Ghoshal</span>
-        </div>
-      </div>
-
-      <div class="section-header-bar">
-        <div class="section-title" id="pageTitle">Arijit Singh Special 🎤</div>
-        <button class="bulk-dl-btn" id="bulkDlBtn" style="display: none;" onclick="downloadFullPlaylist()">📥 Save Playlist Offline</button>
-      </div>
-
-      <div class="song-grid" id="songGrid">
-        <p style="color: #b3b3b3;">Loading songs...</p>
-      </div>
-
-      <div class="overlay-panel" id="lyricsPanel">
-        <div class="overlay-header">
-          <span>📜 Lyrics</span>
-          <button style="background:none; border:none; color:#fff; cursor:pointer;" onclick="toggleLyricsPanel()">✖</button>
-        </div>
-        <pre id="lyricsContent" style="white-space: pre-wrap; font-size:12px; color:#ddd; line-height:1.6;"></pre>
-      </div>
-
-      <div class="overlay-panel" id="queuePanel">
-        <div class="overlay-header">
-          <span>🎼 Up Next Queue</span>
-          <button style="background:none; border:none; color:#fff; cursor:pointer;" onclick="toggleQueuePanel()">✖</button>
-        </div>
-        <div id="queueList" style="display:flex; flex-direction:column; gap:8px;"></div>
-      </div>
-
-    </div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search song or artist...">
+    <button onclick="searchSong()">Search</button>
   </div>
 
-  <div class="player-bar">
-    <div class="song-info">
-      <img id="currentCover" src="https://picsum.photos/200" alt="Cover">
-      <div class="song-details">
-        <h5 id="currentTitle">Select a Song</h5>
-        <p id="currentArtist">-</p>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div class="buttons">
-        <button class="toggle-btn" id="shuffleBtn" onclick="toggleShuffle()">🔀 Shuffle OFF</button>
-        <button class="btn" id="prevBtn" onclick="playPrevious()">⏮</button>
-        <button class="btn-play" id="playBtn" onclick="togglePlay()">▶</button>
-        <button class="btn" id="nextBtn" onclick="playNext()">⏭</button>
-        <button class="toggle-btn" id="repeatBtn" onclick="toggleRepeat()">🔁 Repeat OFF</button>
-      </div>
-      <div class="progress-container">
-        <span id="currentTime">0:00</span>
-        <input type="range" id="progressBar" class="progress-bar" value="0" max="100">
-        <span id="duration">0:00</span>
-      </div>
-    </div>
-
-    <div class="right-controls">
-      <button class="btn" onclick="toggleQueuePanel()" title="Up Next Queue">🎼</button>
-      <button class="btn" onclick="toggleLyricsPanel()" title="Show Lyrics">📜</button>
-      <span>🔊</span>
-      <input type="range" id="volumeBar" class="volume-bar" value="100" max="100">
-    </div>
+  <div class="song-list" id="songList">
+    <div class="status-msg">Searching trending songs...</div>
   </div>
 
-  <audio id="audioPlayer"></audio>
+  <div class="player">
+    <div id="nowPlaying" style="font-size: 13px; color: #1db954; text-align: center;">Select a song to play</div>
+    <audio id="audioPlayer" controls autoplay></audio>
+  </div>
 
   <script>
-    let songs = [];
-    let playQueue = [];
-    let userData = { favorites: [], playlists: {}, history: [] };
-    let currentIndex = 0;
-    let currentMode = 'online';
-    let currentPlaylistName = '';
-    let isShuffle = false;
-    let isRepeat = false;
+    const songList = document.getElementById('songList');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const nowPlaying = document.getElementById('nowPlaying');
 
-    let sleepTimer = null;
-    let sleepTimeRemaining = 0;
-
-    const audio = document.getElementById("audioPlayer");
-    const playBtn = document.getElementById("playBtn");
-    const progressBar = document.getElementById("progressBar");
-    const volumeBar = document.getElementById("volumeBar");
-    const currentTimeEl = document.getElementById("currentTime");
-    const durationEl = document.getElementById("duration");
-
-    async function loadUserData() {
+    async function searchSong() {
+      const q = document.getElementById('searchInput').value || 'Arijit Singh';
+      songList.innerHTML = '<div class="status-msg">Loading songs...</div>';
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/user-data');
-        userData = await res.json();
-        renderPlaylistButtons();
-      } catch (err) { console.error("Error loading user data", err); }
-    }
-
-    async function saveUserData() {
-      try {
-        await fetch('http://127.0.0.1:5000/api/user-data', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(userData)
-        });
-      } catch (err) { console.error("Error saving user data", err); }
-    }
-
-    function exportDataBackup() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userData, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", "beatpulse_backup.json");
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    function triggerImportBackup() {
-      document.getElementById("importFileInput").click();
-    }
-
-    function handleFileImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (imported && typeof imported === 'object') {
-            userData = imported;
-            await saveUserData();
-            renderPlaylistButtons();
-            alert("✅ Backup successfully restored!");
-          }
-        } catch (err) { alert("❌ Invalid JSON Backup File!"); }
-      };
-      reader.readAsText(file);
-    }
-
-    function renderPlaylistButtons() {
-      const container = document.getElementById("playlistList");
-      container.innerHTML = "";
-      Object.keys(userData.playlists).forEach(pName => {
-        const btn = document.createElement("button");
-        btn.className = "section-btn";
-        btn.innerText = "📋 " + pName;
-        btn.onclick = () => switchTab('playlist_' + pName);
-        container.appendChild(btn);
-      });
-    }
-
-    function createNewPlaylist() {
-      const name = prompt("Playlist ka naam likhein:");
-      if (name && !userData.playlists[name]) {
-        userData.playlists[name] = [];
-        saveUserData();
-        renderPlaylistButtons();
-      }
-    }
-
-    async function searchOnlineSongs(query = "Arijit Singh") {
-      const songGrid = document.getElementById("songGrid");
-      songGrid.innerHTML = "<p style='color: #b3b3b3;'>⚡ Instant searching songs...</p>";
-      
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/api/search-online?query=${encodeURIComponent(query)}`);
-        songs = await response.json();
-        document.getElementById("pageTitle").innerText = `Results for "${query}" 🎤`;
-        document.getElementById("bulkDlBtn").style.display = "none";
-        renderSongGrid(songs);
-      } catch (error) { songGrid.innerHTML = "<p style='color: #ff5555;'>Server error. Check 'python app.py'.</p>"; }
-    }
-
-    function searchByTag(tag) {
-      document.getElementById("searchInput").value = tag;
-      if (currentMode !== 'online') switchTab('online');
-      else searchOnlineSongs(tag);
-    }
-
-    async function playArtistRadio(artistName) {
-      document.getElementById("searchInput").value = artistName;
-      await searchOnlineSongs(artistName);
-      if (songs.length > 0) loadAndPlaySong(0);
-    }
-
-    async function fetchLocalSongs(playlistName = '') {
-      const songGrid = document.getElementById("songGrid");
-      songGrid.innerHTML = "<p style='color: #b3b3b3;'>Loading offline songs...</p>";
-      try {
-        const url = playlistName ? `http://127.0.0.1:5000/api/songs?playlist=${encodeURIComponent(playlistName)}` : 'http://127.0.0.1:5000/api/songs';
-        const response = await fetch(url);
-        songs = await response.json();
-        renderSongGrid(songs);
-      } catch (error) { songGrid.innerHTML = "<p style='color: #ff5555;'>Backend error.</p>"; }
-    }
-
-    function renderSongGrid(songList) {
-      const songGrid = document.getElementById("songGrid");
-      songGrid.innerHTML = "";
-      
-      if (!songList || songList.length === 0) {
-        songGrid.innerHTML = "<p style='color: #b3b3b3;'>Is section me koi gana nahi hai!</p>";
-        return;
-      }
-
-      songList.forEach((song, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        
-        const isLiked = userData.favorites.some(f => f.title === song.title);
-        
-        let dlOrDelHtml = "";
-        if (currentMode === 'online') {
-          if (song.isDownloaded) {
-            dlOrDelHtml = `<span class="downloaded-badge">✅ Saved</span>`;
-          } else {
-            dlOrDelHtml = `<button class="save-btn" onclick="saveToLocalApp(event, '${song.video_url}', '${song.title.replace(/'/g, "\\'")}', '${song.cover}', '')">📥 Save</button>`;
-          }
-        } else if (currentMode === 'local') {
-          dlOrDelHtml = `<button class="action-icon" title="Delete File" onclick="deleteOfflineSong(event, '${song.rel_path}')">🗑️</button>`;
-        } else if (currentMode === 'favorites' || currentMode.startsWith('playlist_')) {
-          dlOrDelHtml = `<button class="action-icon" title="Remove" onclick="removeFromCurrentList(event, ${index})">🗑️</button>`;
-        }
-
-        let actionsHtml = `
-          <div class="card-actions">
-            <button class="action-icon ${isLiked ? 'liked' : ''}" onclick="toggleFavorite(event, ${index})">${isLiked ? '❤️' : '🤍'}</button>
-            <button class="action-icon" title="Add to Queue" onclick="addToQueue(event, ${index})">🎼</button>
-            <button class="action-icon" title="Add to Playlist" onclick="addToPlaylistMenu(event, ${index})">➕</button>
-            ${dlOrDelHtml}
-          </div>
-        `;
-
-        card.innerHTML = `
-          <img src="${song.cover}" alt="cover" onerror="this.src='https://picsum.photos/300'">
-          <h4>${song.title}</h4>
-          <p>${song.artist}</p>
-          ${actionsHtml}
-        `;
-        card.onclick = (e) => {
-          if (e.target.tagName === 'BUTTON') return;
-          loadAndPlaySong(index);
-        };
-        songGrid.appendChild(card);
-      });
-    }
-
-    async function loadAndPlaySong(index) {
-      if (songs.length === 0) return;
-      if (index < 0) index = songs.length - 1;
-      if (index >= songs.length) index = 0;
-
-      currentIndex = index;
-      const song = songs[currentIndex];
-
-      if (!userData.history.some(h => h.title === song.title)) {
-        userData.history.unshift(song);
-        if (userData.history.length > 30) userData.history.pop();
-        saveUserData();
-      }
-
-      document.getElementById("currentTitle").innerText = "⌛ Stream Loading...";
-      document.getElementById("currentArtist").innerText = song.artist;
-      document.getElementById("currentCover").src = song.cover;
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: song.title,
-          artist: song.artist,
-          artwork: [{ src: song.cover, sizes: '512x512', type: 'image/jpeg' }]
-        });
-        navigator.mediaSession.setActionHandler('play', () => togglePlay());
-        navigator.mediaSession.setActionHandler('pause', () => togglePlay());
-        navigator.mediaSession.setActionHandler('previoustrack', () => playPrevious());
-        navigator.mediaSession.setActionHandler('nexttrack', () => playNext());
-      }
-
-      if (song.isLocal || song.url) {
-        audio.src = song.url;
-        document.getElementById("currentTitle").innerText = song.title;
-        audio.play().then(() => { playBtn.innerText = "⏸"; }).catch(e => {
-          console.error("Local play error", e);
-          autoSkipOnFailure();
-        });
-      } else {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-          const res = await fetch('http://127.0.0.1:5000/api/get-stream-url', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ video_url: song.video_url }),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-
-          const data = await res.json();
-          if (data.stream_url) {
-            audio.src = data.stream_url;
-            document.getElementById("currentTitle").innerText = song.title;
-            audio.play().then(() => { playBtn.innerText = "⏸"; }).catch(err => {
-              console.error("Online play error", err);
-              autoSkipOnFailure();
-            });
-          } else {
-            autoSkipOnFailure();
-          }
-        } catch (err) {
-          console.error("Stream fetch failed", err);
-          autoSkipOnFailure();
-        }
-      }
-      
-      fetchLyrics(song.title, song.artist);
-    }
-
-    function autoSkipOnFailure() {
-      document.getElementById("currentTitle").innerText = "⚠️ Stream failed, skipping next...";
-      setTimeout(() => { playNext(); }, 1000);
-    }
-
-    async function fetchLyrics(title, artist) {
-      const lyricsEl = document.getElementById("lyricsContent");
-      lyricsEl.innerText = "Searching lyrics...";
-      try {
-        const res = await fetch(`http://127.0.0.1:5000/api/lyrics?title=${encodeURIComponent(title)}&artist=${encodeURIComponent(artist)}`);
+        const res = await fetch(`/api/search-online?query=${encodeURIComponent(q)}`);
         const data = await res.json();
-        lyricsEl.innerText = data.lyrics;
-      } catch (e) {
-        lyricsEl.innerText = "Lyrics unavailable.";
-      }
-    }
-
-    function toggleLyricsPanel() {
-      const panel = document.getElementById("lyricsPanel");
-      panel.style.display = (panel.style.display === "block") ? "none" : "block";
-    }
-
-    function toggleQueuePanel() {
-      const panel = document.getElementById("queuePanel");
-      panel.style.display = (panel.style.display === "block") ? "none" : "block";
-      renderQueueList();
-    }
-
-    function addToQueue(event, index) {
-      if (event) event.stopPropagation();
-      playQueue.push(songs[index]);
-      alert(`"${songs[index].title}" Queue me add ho gaya!`);
-    }
-
-    function renderQueueList() {
-      const listContainer = document.getElementById("queueList");
-      listContainer.innerHTML = "";
-      if (playQueue.length === 0) {
-        listContainer.innerHTML = "<p style='font-size:12px; color:#888;'>Queue khali hai!</p>";
-        return;
-      }
-      playQueue.forEach((s, idx) => {
-        const item = document.createElement("div");
-        item.style.cssText = "display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid #222; padding-bottom:4px;";
-        item.innerHTML = `<span>${idx+1}. ${s.title}</span><button style="background:none; border:none; color:#ff5555; cursor:pointer;" onclick="removeFromQueue(${idx})">✖</button>`;
-        listContainer.appendChild(item);
-      });
-    }
-
-    function removeFromQueue(idx) {
-      playQueue.splice(idx, 1);
-      renderQueueList();
-    }
-
-    async function deleteOfflineSong(event, relPath) {
-      event.stopPropagation();
-      if (!confirm("Kya aap is song ko offline storage se delete karna chahte hain?")) return;
-      try {
-        const res = await fetch('http://127.0.0.1:5000/api/delete-song', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ rel_path: relPath })
-        });
-        if (res.ok) {
-          fetchLocalSongs('');
+        if(!data || data.length === 0) {
+          songList.innerHTML = '<div class="status-msg">No songs found. Try another search.</div>';
+          return;
         }
-      } catch (err) { alert("Delete fail hua"); }
-    }
-
-    function removeFromCurrentList(event, index) {
-      event.stopPropagation();
-      if (currentMode === 'favorites') {
-        userData.favorites.splice(index, 1);
-        songs = [...userData.favorites];
-      } else if (currentMode.startsWith('playlist_')) {
-        const pName = currentMode.replace('playlist_', '');
-        userData.playlists[pName].splice(index, 1);
-        songs = [...userData.playlists[pName]];
-      }
-      saveUserData();
-      renderSongGrid(songs);
-    }
-
-    async function saveToLocalApp(event, videoUrl, songTitle, coverUrl, playlistName) {
-      if (event) event.stopPropagation();
-      alert(`"${songTitle}" download ho raha hai... Please wait!`);
-      
-      try {
-        const res = await fetch('http://127.0.0.1:5000/api/save-to-app', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ video_url: videoUrl, title: songTitle, cover: coverUrl, playlist_name: playlistName })
+        songList.innerHTML = '';
+        data.forEach(song => {
+          const card = document.createElement('div');
+          card.className = 'song-card';
+          card.innerHTML = `
+            <img src="${song.cover}" alt="cover">
+            <div class="song-info">
+              <div class="song-title">${song.title}</div>
+              <div class="song-artist">${song.artist}</div>
+            </div>
+          `;
+          card.onclick = () => playSong(song.id, song.title);
+          songList.appendChild(card);
         });
+      } catch(err) {
+        songList.innerHTML = '<div class="status-msg" style="color:#ff5555">Server waking up... Please wait 10 seconds and search again.</div>';
+      }
+    }
+
+    async function playSong(videoId, title) {
+      nowPlaying.innerText = "Connecting stream: " + title;
+      try {
+        const res = await fetch(`/stream/${videoId}`);
         const data = await res.json();
-        if (res.ok) {
-          alert("✅ " + data.message);
-          if (currentMode === 'online') searchOnlineSongs(document.getElementById("searchInput").value || "Arijit Singh");
-        }
-      } catch (err) { alert("Error connecting to server"); }
-    }
-
-    async function downloadFullPlaylist() {
-      if (!songs || songs.length === 0) return;
-      const targetPName = currentPlaylistName || "Favorites";
-      if (!confirm(`Kya aap '${targetPName}' ke saare gano ko iske alag offline folder me save karna chahte hain?`)) return;
-
-      for (let i = 0; i < songs.length; i++) {
-        const song = songs[i];
-        document.getElementById("pageTitle").innerText = `Saving to '${targetPName}' (${i+1}/${songs.length}): ${song.title}...`;
-        if (song.video_url) {
-          try {
-            await fetch('http://127.0.0.1:5000/api/save-to-app', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ video_url: song.video_url, title: song.title, cover: song.cover, playlist_name: targetPName })
-            });
-          } catch (e) { console.error("Bulk download error"); }
-        }
-      }
-      alert(`🎉 '${targetPName}' saved offline!`);
-    }
-
-    function toggleFavorite(event, index) {
-      event.stopPropagation();
-      const song = songs[index];
-      const favIdx = userData.favorites.findIndex(f => f.title === song.title);
-      if (favIdx > -1) { userData.favorites.splice(favIdx, 1); } 
-      else { userData.favorites.push(song); }
-      saveUserData();
-      renderSongGrid(songs);
-    }
-
-    function addToPlaylistMenu(event, index) {
-      event.stopPropagation();
-      const pNames = Object.keys(userData.playlists);
-      if (pNames.length === 0) {
-        alert("Pehle left sidebar se 'Create Playlist' par click karke ek playlist banayein!");
-        return;
-      }
-      const choice = prompt("Kiski playlist me add karein?\n" + pNames.join(", "));
-      if (choice && userData.playlists[choice]) {
-        userData.playlists[choice].push(songs[index]);
-        saveUserData();
-        alert(`"${songs[index].title}" '${choice}' playlist me add ho gaya!`);
-      }
-    }
-
-    function handleTimerChange(mins) {
-      const minutes = parseInt(mins);
-      if (sleepTimer) clearInterval(sleepTimer);
-      if (minutes === 0) { document.getElementById("timerDisplay").innerText = ""; return; }
-      sleepTimeRemaining = minutes * 60;
-      sleepTimer = setInterval(() => {
-        sleepTimeRemaining--;
-        const m = Math.floor(sleepTimeRemaining / 60);
-        const s = sleepTimeRemaining % 60;
-        document.getElementById("timerDisplay").innerText = ` (${m}:${s < 10 ? '0' : ''}${s})`;
-        if (sleepTimeRemaining <= 0) {
-          clearInterval(sleepTimer);
-          audio.pause();
-          playBtn.innerText = "▶";
-          alert("🌙 Sleep Timer ended!");
-        }
-      }, 1000);
-    }
-
-    function togglePlay() {
-      if (songs.length === 0) return;
-      if (!audio.src) { loadAndPlaySong(0); return; }
-      if (audio.paused) { audio.play(); playBtn.innerText = "⏸"; } 
-      else { audio.pause(); playBtn.innerText = "▶"; }
-    }
-
-    function playNext() {
-      if (songs.length === 0) return;
-
-      if (playQueue.length > 0) {
-        const nextSong = playQueue.shift();
-        renderQueueList();
-        const foundIdx = songs.findIndex(s => s.title === nextSong.title);
-        if (foundIdx > -1) {
-          loadAndPlaySong(foundIdx);
+        if(data.stream_url) {
+          audioPlayer.src = data.stream_url;
+          nowPlaying.innerText = "Playing: " + title;
+          audioPlayer.play();
         } else {
-          songs.splice(currentIndex + 1, 0, nextSong);
-          loadAndPlaySong(currentIndex + 1);
+          nowPlaying.innerText = "Unable to stream this song.";
         }
-        return;
-      }
-
-      if (isShuffle) {
-        let randIdx = Math.floor(Math.random() * songs.length);
-        if (songs.length > 1 && randIdx === currentIndex) {
-          randIdx = (randIdx + 1) % songs.length;
-        }
-        currentIndex = randIdx;
-      } else {
-        currentIndex = (currentIndex + 1) % songs.length;
-      }
-
-      loadAndPlaySong(currentIndex);
-    }
-
-    function playPrevious() {
-      if (songs.length === 0) return;
-      currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-      loadAndPlaySong(currentIndex);
-    }
-
-    audio.onended = () => {
-      if (isRepeat) { audio.currentTime = 0; audio.play(); } 
-      else { playNext(); }
-    };
-
-    function toggleShuffle() {
-      isShuffle = !isShuffle;
-      const sBtn = document.getElementById("shuffleBtn");
-      sBtn.classList.toggle("active", isShuffle);
-      sBtn.innerText = isShuffle ? "🔀 Shuffle ON" : "🔀 Shuffle OFF";
-    }
-
-    function toggleRepeat() {
-      isRepeat = !isRepeat;
-      const rBtn = document.getElementById("repeatBtn");
-      rBtn.classList.toggle("active", isRepeat);
-      rBtn.innerText = isRepeat ? "🔁 Repeat ON" : "🔁 Repeat OFF";
-    }
-
-    volumeBar.oninput = () => { audio.volume = volumeBar.value / 100; };
-
-    audio.ontimeupdate = () => {
-      if (audio.duration) {
-        progressBar.value = (audio.currentTime / audio.duration) * 100;
-        currentTimeEl.innerText = formatTime(audio.currentTime);
-        durationEl.innerText = formatTime(audio.duration);
-      }
-    };
-
-    progressBar.oninput = () => {
-      if (audio.duration) { audio.currentTime = (progressBar.value / 100) * audio.duration; }
-    };
-
-    function formatTime(sec) {
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60);
-      return `${m}:${s < 10 ? '0' : ''}${s}`;
-    }
-
-    function triggerSearch() {
-      const query = document.getElementById("searchInput").value.trim();
-      if (query && currentMode === 'online') { searchOnlineSongs(query); }
-    }
-
-    function switchTab(mode) {
-      currentMode = mode;
-      document.querySelectorAll(".section-btn").forEach(b => b.classList.remove("active-tab"));
-      
-      if (mode === 'online') {
-        currentPlaylistName = '';
-        document.getElementById("onlineTabBtn").classList.add("active-tab");
-        document.getElementById("bulkDlBtn").style.display = "none";
-        searchOnlineSongs(document.getElementById("searchInput").value || "Arijit Singh");
-      } else if (mode === 'local') {
-        currentPlaylistName = '';
-        document.getElementById("localTabBtn").classList.add("active-tab");
-        document.getElementById("bulkDlBtn").style.display = "none";
-        document.getElementById("pageTitle").innerText = "All Saved Offline MP3s 📁";
-        fetchLocalSongs('');
-      } else if (mode === 'favorites') {
-        currentPlaylistName = 'Favorites';
-        document.getElementById("favTabBtn").classList.add("active-tab");
-        document.getElementById("pageTitle").innerText = "Liked Songs ❤️";
-        document.getElementById("bulkDlBtn").style.display = "inline-block";
-        songs = [...userData.favorites];
-        renderSongGrid(songs);
-      } else if (mode === 'history') {
-        currentPlaylistName = '';
-        document.getElementById("historyTabBtn").classList.add("active-tab");
-        document.getElementById("bulkDlBtn").style.display = "none";
-        document.getElementById("pageTitle").innerText = "Recently Played History 🕒";
-        songs = [...userData.history];
-        renderSongGrid(songs);
-      } else if (mode.startsWith('playlist_')) {
-        const pName = mode.replace('playlist_', '');
-        currentPlaylistName = pName;
-        document.getElementById("pageTitle").innerText = `Playlist: ${pName} 📋`;
-        document.getElementById("bulkDlBtn").style.display = "inline-block";
-        
-        if (userData.playlists[pName] && userData.playlists[pName].length > 0) {
-          songs = [...userData.playlists[pName]];
-          renderSongGrid(songs);
-        } else {
-          fetchLocalSongs(pName);
-        }
+      } catch(err) {
+        nowPlaying.innerText = "Error playing song.";
       }
     }
 
-    document.getElementById("searchInput").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") triggerSearch();
-    });
-
-    loadUserData();
-    searchOnlineSongs("Arijit Singh");
+    // Auto search on load
+    searchSong();
   </script>
 </body>
 </html>
