@@ -1,4 +1,3 @@
-
 import os
 import json
 import re
@@ -10,7 +9,12 @@ app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
 BASE_DIR = os.path.dirname(__file__)
+SONGS_DIR = os.path.join(BASE_DIR, 'songs')
 DATA_FILE = os.path.join(BASE_DIR, 'user_data.json')
+
+# Create necessary directories automatically
+if not os.path.exists(SONGS_DIR):
+    os.makedirs(SONGS_DIR, exist_ok=True)
 
 if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, 'w') as f:
@@ -27,8 +31,11 @@ def load_user_data():
         return {'favorites': [], 'playlists': {}, 'history': []}
 
 def save_user_data(data):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
+    try:
+        with open(DATA_FILE, 'w') as f:
+            json.dump(data, f, indent=2)
+    except Exception:
+        pass
 
 def clean_title(title):
     patterns = [
@@ -46,10 +53,29 @@ def clean_title(title):
 def home():
     return send_from_directory('.', 'index.html')
 
-# 2. Local Songs route (Returns empty array so frontend doesn't crash)
+# 2. Local Songs route (Handles all fetch requests safely)
 @app.route('/api/songs', methods=['GET'])
+@app.route('/songs', methods=['GET'])
 def get_local_songs():
-    return jsonify([])
+    try:
+        playlist_name = request.args.get('playlist', '')
+        target_dir = SONGS_DIR
+        if playlist_name:
+            target_dir = os.path.join(SONGS_DIR, playlist_name)
+        
+        song_list = []
+        if os.path.exists(target_dir):
+            for root, dirs, files in os.walk(target_dir):
+                for file in files:
+                    if file.lower().endswith(('.mp3', '.m4a', '.webm', '.wav')):
+                        rel_path = os.path.relpath(os.path.join(root, file), SONGS_DIR)
+                        song_list.append({
+                            'title': clean_title(file),
+                            'url': f"/songs/{rel_path}"
+                        })
+        return jsonify(song_list)
+    except Exception:
+        return jsonify([])
 
 # 3. Online Search route
 @app.route('/api/search-online', methods=['GET'])
@@ -78,8 +104,8 @@ def search_online():
                         'duration': entry.get('duration')
                     })
         return jsonify(results)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    except Exception:
+        return jsonify([])
 
 # 4. Stream route
 @app.route('/stream/<video_id>', methods=['GET'])
@@ -103,7 +129,7 @@ def user_data_api():
     if request.method == 'GET':
         return jsonify(load_user_data())
     else:
-        new_data = request.json
+        new_data = request.json or {}
         save_user_data(new_data)
         return jsonify({'status': 'success'})
 
