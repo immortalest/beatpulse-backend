@@ -100,7 +100,7 @@ def search_online():
 
     search_term = f"{query_clean} official song"
 
-   ydl_opts = {
+  ydl_opts = {
     'format': 'bestaudio/best',
     'skip_download': True,
     'quiet': True,
