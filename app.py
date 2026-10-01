@@ -98,21 +98,21 @@ def search_online():
     if query_key in SEARCH_CACHE and (time.time() - SEARCH_CACHE[query_key]['time'] < 1800):
         return jsonify(SEARCH_CACHE[query_key]['data'])
 
-    search_term = f"{query_clean} official song"
+    search_term = query_clean
 
-  ydl_opts = {
-    'format': 'bestaudio/best',
-    'skip_download': True,
-    'quiet': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': True,
-    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'extractor_args': {
-        'youtube': {
-            'player_client': ['android', 'ios']
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'skip_download': True,
+        'quiet': True,
+        'nocheckcertificate': True,
+        'ignoreerrors': True,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'ios']
+            }
         }
     }
-}
 
     
     results = []
