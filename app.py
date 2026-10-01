@@ -100,14 +100,20 @@ def search_online():
 
     search_term = f"{query_clean} official song"
 
-    ydl_opts = {
-        'extract_flat': True,
-        'skip_download': True,
-        'quiet': True,
-        'nocheckcertificate': True,
-        'ignoreerrors': True,
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36'
+   ydl_opts = {
+    'format': 'bestaudio/best',
+    'skip_download': True,
+    'quiet': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': True,
+    'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'extractor_args': {
+        'youtube': {
+            'player_client': ['android', 'ios']
+        }
     }
+}
+
     
     results = []
     bad_words = ['jukebox', 'full album', 'all songs', 'non stop', 'non-stop', '1 hour', '2 hour', '3 hour', '30 min', 'full movie', 'compilation', 'podcast', 'reaction', 'cover by', 'dance', 'karaoke', 'shorts']
